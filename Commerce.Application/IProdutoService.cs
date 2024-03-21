@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Commerce.Application
 {
-    public interface IProdutoServices
+    public interface IProdutoService
     {
         List<Produto> GetAllProdutos();
     }

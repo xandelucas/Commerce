@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Commerce.Application.Services
 {
-    public class ProdutoService : IProdutoServices
+    public class ProdutoService : IProdutoService
     {
         private readonly IProdutoRepository produtoRepository;
 
