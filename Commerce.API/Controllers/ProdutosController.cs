@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Commerce.API.Data;
 using Commerce.Domain;
+using Commerce.Application;
 
 namespace Commerce.API.Controllers
 {
@@ -14,25 +14,26 @@ namespace Commerce.API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly DBContext _context;
+        private readonly IProdutoService _produtoService;
 
-        public ProdutosController(DBContext context)
+        public ProdutosController(IProdutoService produtoService)
         {
-            _context = context;
+            _produtoService = produtoService;
         }
 
         // GET: api/Produtos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produto>>> GetProduto()
+        public ActionResult<IEnumerable<Produto>> GetProduto()
         {
-            return await _context.Produto.ToListAsync();
+            var produtos = _produtoService.GetAllProdutos().ToList();
+            return Ok(value: produtos);
         }
 
         // GET: api/Produtos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Produto>> GetProduto(int id)
+        public async Task<ActionResult<Produto>> GetProdutoById(int id)
         {
-            var produto = await _context.Produto.FindAsync(id);
+            var produto =  _context.Produto.FindAsync(id);
 
             if (produto == null)
             {
