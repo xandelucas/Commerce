@@ -12,7 +12,8 @@ namespace Commerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProdutosController : ControllerBase
+   
+public class ProdutosController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
 
@@ -25,39 +26,34 @@ namespace Commerce.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> GetProduto()
         {
-            var produtos = _produtoService.GetAllProdutos().ToList();
-            return Ok(value: produtos);
+            var produtos = _produtoService.GetAllProdutos();
+            return Ok(produtos);
         }
 
         // GET: api/Produtos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Produto>> GetProdutoById(int id)
+        public ActionResult<Produto> GetProdutoById(int id)
         {
-            var produto =  _context.Produto.FindAsync(id);
-
+            var produto = _produtoService.GetProdutoById(id);
             if (produto == null)
             {
                 return NotFound();
             }
-
-            return produto;
+            return Ok(produto);
         }
 
         // PUT: api/Produtos/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduto(int id, Produto produto)
+        public IActionResult PutProduto(int id, Produto produto)
         {
             if (id != produto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(produto).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                _produtoService.AtualizaProduto(produto);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -75,35 +71,30 @@ namespace Commerce.API.Controllers
         }
 
         // POST: api/Produtos
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Produto>> PostProduto(Produto produto)
+        public ActionResult<Produto> PostProduto(Produto produto)
         {
-            _context.Produto.Add(produto);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProduto", new { id = produto.Id }, produto);
+            var createdProduto = _produtoService.CriaProduto(produto);
+            return CreatedAtAction("GetProdutoById", new { id = createdProduto.Id }, createdProduto);
         }
 
         // DELETE: api/Produtos/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduto(int id)
+        public IActionResult DeleteProduto(int id)
         {
-            var produto = await _context.Produto.FindAsync(id);
-            if (produto == null)
+            var produtoExists = ProdutoExists(id);
+            if (!produtoExists)
             {
                 return NotFound();
             }
 
-            _context.Produto.Remove(produto);
-            await _context.SaveChangesAsync();
-
+            _produtoService.DeletaProduto(id);
             return NoContent();
         }
 
         private bool ProdutoExists(int id)
         {
-            return _context.Produto.Any(e => e.Id == id);
+            return _produtoService.GetProdutoById(id) is not null ;
         }
     }
 }

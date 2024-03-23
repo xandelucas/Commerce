@@ -15,13 +15,6 @@ namespace Commerce.Infrastructure
             _dbContext = dbContext;
         }
 
-        public static List<Produto> listaProdutos = new List<Produto>(){
-            new Produto{Id = 1, Estoque = 10, Valor = 1000, Nome = "Tablet"         },
-            new Produto{Id = 2, Estoque = 10, Valor = 1500, Nome = "Notebook"       },
-            new Produto{Id = 3, Estoque = 10, Valor = 4000, Nome = "Playstation 5"  },
-            new Produto{Id = 4, Estoque = 10, Valor = 2000, Nome = "Nintendo Switch"},
-            new Produto{Id = 5, Estoque = 10, Valor = 6000, Nome = "Tablet"}
-            };
         public List<Produto> GetAllProdutos()
         {
             return _dbContext.Produto.OrderBy(x => x.Id).ToList();
@@ -34,22 +27,21 @@ namespace Commerce.Infrastructure
 
         public Produto GetProdutoById(int id)
         {
-            throw new NotImplementedException();
+            return _dbContext.Produto.Find(id);
         }
 
         public Produto AtualizaProduto(Produto produto)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(produto).State = EntityState.Modified;
+            _dbContext.SaveChanges();
+            return produto;
         }
 
         public Produto CriaProduto(Produto produto)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<Produto> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente)
-        {
-            throw new NotImplementedException();
+            _dbContext.Produto.Add(produto);
+            _dbContext.SaveChanges();
+            return produto;
         }
 
         public List<Produto> GetProdutoByNome(string nome)
@@ -59,7 +51,12 @@ namespace Commerce.Infrastructure
 
         public void DeletaProduto(int id)
         {
-            throw new NotImplementedException();
+            var produto = _dbContext.Produto.Find(id);
+            if (produto != null)
+            {
+                _dbContext.Produto.Remove(produto);
+                _dbContext.SaveChanges();
+            }
         }
     }
 }

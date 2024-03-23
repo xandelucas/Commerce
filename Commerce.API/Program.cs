@@ -6,7 +6,23 @@ using Commerce.Application;
 using Commerce.Application.Services;
 using Commerce.Infrastructure;
 using Commerce.Infrastructure.Data;
+using Commerce.Infrastructure.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
+
+
+var oracleConnectionString = builder.Configuration.GetConnectionString("OracleConnection") ?? throw new InvalidOperationException("String de conexão inválida");
+
+builder.Services.AddSingleton(new OracleDatabaseServiceConfiguration
+{
+    ConnectionString = oracleConnectionString
+});
+
+builder.Services.AddScoped<OracleDatabaseService>(sp =>
+{
+    var configuration = sp.GetRequiredService<OracleDatabaseServiceConfiguration>();
+    return new OracleDatabaseService(configuration);
+});
+
 builder.Services.AddDbContext<CommerceDBContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection") ?? throw new InvalidOperationException("String de conexão inválida")));
 
@@ -18,6 +34,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProdutoService,ProdutoService>();
 builder.Services.AddScoped<IProdutoRepository,ProdutoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<OracleDatabaseService>();
 
 var app = builder.Build();

@@ -16,8 +16,17 @@ namespace Commerce.Infrastructure.Data
             _connectionString = connectionString;
         }
 
+        public OracleDatabaseService(OracleDatabaseServiceConfiguration configuration)
+        {
+            _connectionString = configuration.ConnectionString;
+        }
+
         public void ConnectToDatabase()
         {
+            OracleConfiguration.WalletLocation = "Commerce.Infrastructure\\Wallet"; 
+            OracleConfiguration.SqlNetAuthenticationServices = "WALLET";
+            OracleConfiguration.SqlNetWalletOverride = true;
+
             using (OracleConnection connection = new OracleConnection(_connectionString))
             {
                 try

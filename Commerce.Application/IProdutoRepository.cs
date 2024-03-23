@@ -15,8 +15,6 @@ namespace Commerce.Application
 
         Produto CriaProduto(Produto produto);
 
-        List<Produto> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente);
-
         List<Produto> GetProdutoByNome(string nome);
 
         void DeletaProduto(int id);

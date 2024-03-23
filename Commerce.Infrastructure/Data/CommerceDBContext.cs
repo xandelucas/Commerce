@@ -14,6 +14,21 @@ namespace Commerce.Infrastructure.Data
         {
         }
 
-        public DbSet<Commerce.Domain.Produto> Produto { get; set; } 
+        public DbSet<Commerce.Domain.Produto> Produto { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Commerce.Domain.Produto>(entity =>
+            {
+                entity.ToTable("PRODUTO");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Nome).HasColumnName("NOME").IsRequired();
+                entity.Property(e => e.Valor).HasColumnName("VALOR").IsRequired();
+                entity.Property(e => e.Estoque).HasColumnName("ESTOQUE").IsRequired();
+            });
+        }
     }
 }
