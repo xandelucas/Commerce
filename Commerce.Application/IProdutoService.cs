@@ -1,4 +1,5 @@
-﻿using Commerce.Domain;
+﻿using Commerce.Application.DTOs;
+using Commerce.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,16 @@ namespace Commerce.Application
 {
     public interface IProdutoService
     {
-        List<Produto> GetAllProdutos();
+        Task<List<Produto>> GetAllProdutosAsync(string nomeCampo, bool isAcendente = true, int pageNumber = 1, int pageSize = 10);
+
+        Task<Produto?> GetProdutoByIdAsync(long id);
+
+        Task<Produto> AtualizaProdutoAsync(ProdutoDTO produtoDTO, Produto produto);
+
+        Task<Produto> CriaProdutoAsync(ProdutoDTO produtoDTO);
+
+        Task<List<Produto>> GetProdutoByNomeAsync(string nome);
+
+        Task DeletaProdutoAsync(Produto produto);
     }
 }

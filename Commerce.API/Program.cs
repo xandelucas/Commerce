@@ -1,21 +1,31 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Commerce.API.Data;
 using Commerce.Application;
 using Commerce.Application.Services;
 using Commerce.Infrastructure;
+using Commerce.Infrastructure.Data;
+using Commerce.Infrastructure.Interfaces;
+using Commerce.API;
+using Microsoft.AspNetCore.Hosting;
+using AutoMapper;
+using Commerce.Application.Mapper;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<DBContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DBContext") ?? throw new InvalidOperationException("Connection string 'DBContext' not found.")));
 
-// Add services to the container.
+builder.Services.AddDbContext<CommerceDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer") ?? throw new InvalidOperationException("String de conexão inválida")));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle    
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IProdutoService,ProdutoService>();
-builder.Services.AddScoped<IProdutoRepository,ProdutoRepository>();
+builder.Services.AddSwaggerGen(s =>
+{
+    s.IncludeXmlComments(Path.Join(AppContext.BaseDirectory, "Commerce.API.xml"));
+});
+builder.Services.AddHostedService<SeedHostedService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddAutoMapper(typeof(ProdutoMapping));
+
 
 var app = builder.Build();
 
