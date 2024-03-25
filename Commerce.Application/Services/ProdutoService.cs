@@ -1,4 +1,6 @@
-﻿using Commerce.Domain;
+﻿using AutoMapper;
+using Commerce.Application.DTOs;
+using Commerce.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,23 +12,36 @@ namespace Commerce.Application.Services
     public class ProdutoService : IProdutoService
     {
         private readonly IProdutoRepository _produtoRepository;
+        private readonly IMapper _mapper;
 
-        public ProdutoService(IProdutoRepository produtoRepository)
+        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper)
         {
             this._produtoRepository = produtoRepository;
+            this._mapper = mapper;
         }
 
-        public async Task<Produto> AtualizaProdutoAsync(Produto produto)
+        public async Task<Produto> AtualizaProdutoAsync(ProdutoDTO produtoDTO,Produto produto)
         {
+            if (produtoDTO.Valor < 0)
+            {
+                throw new ArgumentException("O valor do produto não pode ser negativo!");
+            }
+
+            produto.Nome = produtoDTO.Nome;
+            produto.Valor = produtoDTO.Valor;
+            produto.Estoque = produtoDTO.Estoque;
+
+             
             return await _produtoRepository.AtualizaProdutoAsync(produto);
         }
 
-        public async Task<Produto> CriaProdutoAsync(Produto produto)
+        public async Task<Produto> CriaProdutoAsync(ProdutoDTO produtoDTO)
         {
-            if (produto.Valor < 0)
+            if (produtoDTO.Valor < 0)
             {
-                throw new ArgumentException("Product value cannot be negative.");
+                throw new ArgumentException("O valor do produto não pode ser negativo!");
             }
+            var produto = _mapper.Map<Produto>(produtoDTO);
             return await _produtoRepository.CriaProdutoAsync(produto);
         }
 
@@ -35,12 +50,12 @@ namespace Commerce.Application.Services
             await _produtoRepository.DeletaProdutoAsync(produto);
         }
 
-        public async Task<List<Produto>> GetAllProdutosAsync()
+        public async Task<List<Produto>> GetAllProdutosAsync(string nomeCampo, bool isAcendente = true, int pageNumber = 1, int pageSize = 10)
         {
-            return await _produtoRepository.GetAllProdutosAsync();
+            return await _produtoRepository.GetAllProdutosAsync(nomeCampo, isAcendente, pageNumber, pageSize);
         }
 
-        public async Task<Produto?> GetProdutoByIdAsync(int id)
+        public async Task<Produto?> GetProdutoByIdAsync(long id)
         {
             return await _produtoRepository.GetProdutoByIdAsync(id);
         }
@@ -50,27 +65,5 @@ namespace Commerce.Application.Services
             return await _produtoRepository.GetProdutosByNomeAsync(nome);
         }
 
-        /*public async Task<List<Produto>> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente)
-        {
-            var query = _produtoRepository.GetAll();
-
-            switch (nomeCampo.ToLower())
-            {
-                case "nome":
-                    query = isAscendente ? query.OrderBy(p => p.Nome) : query.OrderByDescending(p => p.Nome);
-                    break;
-                case "valor":
-                    query = isAscendente ? query.OrderBy(p => p.Valor) : query.OrderByDescending(p => p.Valor);
-                    break;
-                case "estoque":
-                    query = isAscendente ? query.OrderBy(p => p.Estoque) : query.OrderByDescending(p => p.Estoque);
-                    break;
-                default:
-                    throw new ArgumentException("Campo para ordenação inválido");
-            }
-
-            return await query.ToListAsync();
-        }
-        */
     }
 }

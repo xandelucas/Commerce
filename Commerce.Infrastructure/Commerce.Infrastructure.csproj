@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Commerce.Domain\Commerce.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Wallet\" />
-  </ItemGroup>
-
 </Project>

@@ -5,11 +5,9 @@ namespace Commerce.Application
 {
     public interface IProdutoRepository
     {
-        Task<List<Produto>> GetAllProdutosAsync();
+        Task<List<Produto>> GetAllProdutosAsync(string nomeCampo, bool isAcendente = true, int pageNumber = 1, int pageSize = 10);
 
-        IQueryable<Produto> GetAll();
-
-        Task<Produto?> GetProdutoByIdAsync(int id);
+        Task<Produto?> GetProdutoByIdAsync(long id);
 
         Task<Produto> AtualizaProdutoAsync(Produto produto);
 
