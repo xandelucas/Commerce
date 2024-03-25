@@ -15,9 +15,13 @@ namespace Commerce.Infrastructure
             _dbContext = dbContext;
         }
 
-        public List<Produto> GetAllProdutos()
+        //Todo Tornar todos os métodos ASync
+        //ToDo Paginar
+        //Adicionar DTO no Service
+        //Remover o IQueryable()
+        public async Task<List<Produto>> GetAllProdutosAsync()
         {
-            return _dbContext.Produto.OrderBy(x => x.Id).ToList();
+            return await _dbContext.Produto.OrderBy(x => x.Id).ToListAsync();
         }
 
         public IQueryable<Produto> GetAll()
@@ -25,38 +29,34 @@ namespace Commerce.Infrastructure
             return _dbContext.Produto.AsQueryable();
         }
 
-        public Produto GetProdutoById(int id)
+        public async Task<Produto?> GetProdutoByIdAsync(int id)
         {
-            return _dbContext.Produto.Find(id);
+            return await _dbContext.Produto.FindAsync(id);
         }
 
-        public Produto AtualizaProduto(Produto produto)
+        public async Task<Produto> AtualizaProdutoAsync(Produto produto)
         {
             _dbContext.Entry(produto).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return produto;
         }
 
-        public Produto CriaProduto(Produto produto)
+        public async Task<Produto> CriaProdutoAsync(Produto produto)
         {
             _dbContext.Produto.Add(produto);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return produto;
         }
 
-        public List<Produto> GetProdutoByNome(string nome)
+        public async Task<List<Produto>> GetProdutosByNomeAsync(string nome)
         {
-            return _dbContext.Produto.Where(x => x.Nome.Contains(nome)).ToList();
+            return await _dbContext.Produto.Where(x => x.Nome.Contains(nome)).ToListAsync();
         }
 
-        public void DeletaProduto(int id)
+        public async Task DeletaProdutoAsync(Produto produto)
         {
-            var produto = _dbContext.Produto.Find(id);
-            if (produto != null)
-            {
                 _dbContext.Produto.Remove(produto);
-                _dbContext.SaveChanges();
-            }
+                await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Commerce.Infrastructure.Data
 {
@@ -13,29 +15,27 @@ namespace Commerce.Infrastructure.Data
     {
         private readonly CommerceDBContext _dbContext;
         private bool _disposed;
+        private IDbContextTransaction? _trasaction;
 
         public UnitOfWork(CommerceDBContext dbContext)
         {
             _dbContext = dbContext;
         }
 
+        public void BeginTransaction()
+        {
+            _trasaction = _dbContext.Database.BeginTransaction();
+        }
+
         public void Commit()
         {
             _dbContext.SaveChanges();
+            _trasaction?.Commit();
         }
 
         public void Rollback()
         {
-            foreach (var entry in _dbContext.ChangeTracker.Entries())
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.State = EntityState.Detached;
-                        break;
-                        // Handle other states as needed
-                }
-            }
+            _trasaction?.Rollback();
         }
 
         public IRepository<T> Repository<T>() where T : class

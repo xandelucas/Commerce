@@ -5,18 +5,18 @@ namespace Commerce.Application
 {
     public interface IProdutoRepository
     {
-        List<Produto> GetAllProdutos();
+        Task<List<Produto>> GetAllProdutosAsync();
 
         IQueryable<Produto> GetAll();
 
-        Produto GetProdutoById(int id);
+        Task<Produto?> GetProdutoByIdAsync(int id);
 
-        Produto AtualizaProduto(Produto produto);
+        Task<Produto> AtualizaProdutoAsync(Produto produto);
 
-        Produto CriaProduto(Produto produto);
+        Task<Produto> CriaProdutoAsync(Produto produto);
 
-        List<Produto> GetProdutoByNome(string nome);
+        Task<List<Produto>> GetProdutosByNomeAsync(string nome);
 
-        void DeletaProduto(int id);
+        Task DeletaProdutoAsync(Produto produto);
     }
 }

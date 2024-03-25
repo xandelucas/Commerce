@@ -9,18 +9,18 @@ namespace Commerce.Application
 {
     public interface IProdutoService
     {
-        List<Produto> GetAllProdutos();
+        Task<List<Produto>> GetAllProdutosAsync();
 
-        Produto GetProdutoById(int id);
+        Task<Produto?> GetProdutoByIdAsync(int id);
 
-        Produto AtualizaProduto(Produto produto);
+        Task<Produto?> AtualizaProdutoAsync(Produto produto);
 
-        Produto CriaProduto(Produto produto);
+        Task<Produto> CriaProdutoAsync(Produto produto);
 
-        List<Produto> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente);
+        //Task<List<Produto>> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente);
 
-        List<Produto> GetProdutoByNome(string nome);
+        Task<List<Produto>> GetProdutoByNomeAsync(string nome);
 
-        void DeletaProduto(int id);
+        Task DeletaProdutoAsync(Produto produto);
     }
 }

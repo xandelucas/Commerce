@@ -16,41 +16,41 @@ namespace Commerce.Application.Services
             this._produtoRepository = produtoRepository;
         }
 
-        public Produto AtualizaProduto(Produto produto)
+        public async Task<Produto> AtualizaProdutoAsync(Produto produto)
         {
-            return _produtoRepository.AtualizaProduto(produto);
+            return await _produtoRepository.AtualizaProdutoAsync(produto);
         }
 
-        public Produto CriaProduto(Produto produto)
+        public async Task<Produto> CriaProdutoAsync(Produto produto)
         {
             if (produto.Valor < 0)
             {
                 throw new ArgumentException("Product value cannot be negative.");
             }
-            return _produtoRepository.CriaProduto(produto);
+            return await _produtoRepository.CriaProdutoAsync(produto);
         }
 
-        public void DeletaProduto(int id)
+        public async Task DeletaProdutoAsync(Produto produto)
         {
-            _produtoRepository.DeletaProduto(id);
+            await _produtoRepository.DeletaProdutoAsync(produto);
         }
 
-        public List<Produto> GetAllProdutos()
+        public async Task<List<Produto>> GetAllProdutosAsync()
         {
-            return _produtoRepository.GetAllProdutos();
+            return await _produtoRepository.GetAllProdutosAsync();
         }
 
-        public Produto GetProdutoById(int id)
+        public async Task<Produto?> GetProdutoByIdAsync(int id)
         {
-            return _produtoRepository.GetProdutoById(id);
+            return await _produtoRepository.GetProdutoByIdAsync(id);
         }
 
-        public List<Produto> GetProdutoByNome(string nome)
+        public async Task<List<Produto>> GetProdutoByNomeAsync(string nome)
         {
-            return _produtoRepository.GetProdutoByNome(nome);
+            return await _produtoRepository.GetProdutosByNomeAsync(nome);
         }
 
-        public List<Produto> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente)
+        /*public async Task<List<Produto>> GetProdutosOrdenadosPor(string nomeCampo, bool isAscendente)
         {
             var query = _produtoRepository.GetAll();
 
@@ -69,7 +69,8 @@ namespace Commerce.Application.Services
                     throw new ArgumentException("Campo para ordenação inválido");
             }
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
+        */
     }
 }

@@ -31,9 +31,12 @@ builder.Services.AddDbContext<CommerceDBContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IProdutoService,ProdutoService>();
-builder.Services.AddScoped<IProdutoRepository,ProdutoRepository>();
+builder.Services.AddSwaggerGen(s =>
+{
+    s.IncludeXmlComments(Path.Join(AppContext.BaseDirectory, "Commerce.API.xml"));
+});
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<OracleDatabaseService>();
 

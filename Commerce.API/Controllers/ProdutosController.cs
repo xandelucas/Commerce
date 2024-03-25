@@ -23,19 +23,22 @@ public class ProdutosController : ControllerBase
         }
 
         // GET: api/Produtos
+        /// <summary>
+        /// Lista todos os produtos cadastrados no sistema.
+        /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> GetProduto()
+        public async Task<ActionResult<IEnumerable<Produto>>> GetProduto()
         {
-            var produtos = _produtoService.GetAllProdutos();
+            var produtos = await _produtoService.GetAllProdutosAsync();
             return Ok(produtos);
         }
 
         // GET: api/Produtos/5
         [HttpGet("{id}")]
-        public ActionResult<Produto> GetProdutoById(int id)
+        public async Task<ActionResult<Produto>> GetProdutoById(int id)
         {
-            var produto = _produtoService.GetProdutoById(id);
-            if (produto == null)
+            var produto = await _produtoService.GetProdutoByIdAsync(id);
+            if (produto is null)
             {
                 return NotFound();
             }
@@ -44,7 +47,7 @@ public class ProdutosController : ControllerBase
 
         // PUT: api/Produtos/5
         [HttpPut("{id}")]
-        public IActionResult PutProduto(int id, Produto produto)
+        public async Task<IActionResult> PutProduto(int id, Produto produto)
         {
             if (id != produto.Id)
             {
@@ -53,7 +56,7 @@ public class ProdutosController : ControllerBase
 
             try
             {
-                _produtoService.AtualizaProduto(produto);
+                await _produtoService.AtualizaProdutoAsync(produto);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -72,29 +75,29 @@ public class ProdutosController : ControllerBase
 
         // POST: api/Produtos
         [HttpPost]
-        public ActionResult<Produto> PostProduto(Produto produto)
+        public async Task<ActionResult<Produto>> PostProduto(Produto produto)
         {
-            var createdProduto = _produtoService.CriaProduto(produto);
+            var createdProduto = await _produtoService.CriaProdutoAsync(produto);
             return CreatedAtAction("GetProdutoById", new { id = createdProduto.Id }, createdProduto);
         }
 
         // DELETE: api/Produtos/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduto(int id)
+        public async Task<IActionResult> DeleteProduto(int id)
         {
-            var produtoExists = ProdutoExists(id);
-            if (!produtoExists)
+            var produto = await _produtoService.GetProdutoByIdAsync(id);
+            if (produto is null)
             {
                 return NotFound();
             }
 
-            _produtoService.DeletaProduto(id);
+             await  _produtoService.DeletaProdutoAsync(produto);
             return NoContent();
         }
 
         private bool ProdutoExists(int id)
         {
-            return _produtoService.GetProdutoById(id) is not null ;
+            return _produtoService.GetProdutoByIdAsync(id) is not null ;
         }
     }
 }
