@@ -1,61 +1,42 @@
-﻿
-using Commerce.Infrastructure.Data;
+﻿using Commerce.Infrastructure.Data;
 
-namespace Commerce.API
+namespace Commerce.API;
+
+public class SeedHostedService : IHostedService
 {
-    public class SeedHostedService : IHostedService
+    private readonly IServiceProvider _sp;
+
+    public SeedHostedService(IServiceProvider sp)
     {
-        private readonly IServiceProvider _sp;
+        _sp = sp;
+    }
 
-        public SeedHostedService(IServiceProvider sp)
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        var scope = _sp.CreateScope();
+        var database = scope.ServiceProvider.GetRequiredService<CommerceDBContext>();
+        if (!database.Categorias.Any())
         {
-            _sp = sp;
+            database.Categorias.Add(new Domain.Categoria("Acessórios","Acessórios"));
+            database.Categorias.Add(new Domain.Categoria("Telefonia","Telefonia"));
+            database.Categorias.Add(new Domain.Categoria("TV","TV"));
+            database.Categorias.Add(new Domain.Categoria("Videogame","VideoGame"));
+            await database.SaveChangesAsync(cancellationToken);
         }
+        if (!database.Produto.Any())
+        {
+            database.Produto.Add(new Domain.Produto("Copo Stanley 483 Ml", 10, 3, true, 1));
+            database.Produto.Add(new Domain.Produto("Tablet  Redmi 12 Pad", 1200, 100, true, 2));
+            database.Produto.Add(new Domain.Produto("TV Samsung 50'", 1800, 50, true, 3));
+            database.Produto.Add(new Domain.Produto("Nintendo Switch OLED", 1900, 50, true, 4));
+            database.Produto.Add(new Domain.Produto("Playstation 5", 4200, 30, false, 4));
+            await database.SaveChangesAsync(cancellationToken);
+        }
+    }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            var scope = _sp.CreateScope();
-            var database = scope.ServiceProvider.GetRequiredService<CommerceDBContext>();
-            if (!database.Produto.Any())
-            {
-                database.Produto.Add(new Domain.Produto()
-                {
-                    Nome = "Copo",
-                    Valor = 10,
-                    Estoque = 10,
-                });
-                database.Produto.Add(new Domain.Produto()
-                {
-                    Nome = "Tablet",
-                    Valor = 1200,
-                    Estoque = 100,
-                });
-                database.Produto.Add(new Domain.Produto()
-                {
-                    Nome = "TV",
-                    Valor = 1800,
-                    Estoque = 50,
-                });
-                database.Produto.Add(new Domain.Produto()
-                {
-                    Nome = "Nintendo Switch",
-                    Valor = 2200,
-                    Estoque = 100,
-                });
-                database.Produto.Add(new Domain.Produto()
-                {
-                    Nome = "Playstation 5",
-                    Valor = 4200,
-                    Estoque = 30,
-                });
-                await database.SaveChangesAsync(cancellationToken);
-            }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }
 

@@ -6,47 +6,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Commerce.Infrastructure.Data
+namespace Commerce.Infrastructure.Data;
+
+public class Repository<T> : IRepository<T> where T : class
 {
-    public class Repository<T> : IRepository<T> where T : class
+    protected readonly DbContext Context;
+    protected DbSet<T> DbSet;
+
+    public Repository(DbContext context)
     {
-        protected readonly DbContext Context;
-        protected DbSet<T> DbSet;
+        Context = context;
+        DbSet = context.Set<T>();
+    }
 
-        public Repository(DbContext context)
-        {
-            Context = context;
-            DbSet = context.Set<T>();
-        }
+    public async Task<IEnumerable<T>> GetAllAsync()
+    {
+        return await DbSet.ToListAsync();
+    }
 
-        public IEnumerable<T> GetAll()
-        {
-            return DbSet.ToList();
-        }
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return await DbSet.FindAsync(id);
+    }
 
-        public T GetById(int id)
-        {
-            return DbSet.Find(id);
-        }
+    public async Task InsertAsync(T entity)
+    {
+        await DbSet.AddAsync(entity);
+    }
 
-        public void Insert(T entity)
-        {
-            DbSet.Add(entity);
-        }
+    public async Task UpdateAsync(T entity)
+    {
+        DbSet.Attach(entity);
+        Context.Entry(entity).State = EntityState.Modified;
+        await Context.SaveChangesAsync();
+    }
 
-        public void Update(T entity)
+    public async Task DeleteAsync(int id)
+    {
+        T? entityToDelete = await DbSet.FindAsync(id);
+        if (entityToDelete != null)
         {
-            DbSet.Attach(entity);
-            Context.Entry(entity).State = EntityState.Modified;
-        }
-
-        public void Delete(int id)
-        {
-            T entityToDelete = DbSet.Find(id);
-            if (entityToDelete != null)
-            {
-                DbSet.Remove(entityToDelete);
-            }
+            DbSet.Remove(entityToDelete);
+            await Context.SaveChangesAsync();
         }
     }
 }
