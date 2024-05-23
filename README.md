@@ -16,7 +16,7 @@ O projeto é dividido em várias partes, cada camada com um propósito específi
 
 - **Clean Architecture**: A arquitetura limpa enfatiza a separação de preocupações, permitindo um teste mais fácil e a evolução do sistema. Ela promove a segregação de operações de leitura e escrita, melhorando desempenho e escalabilidade, enquanto o padrão Repository fornece uma camada de abstração flexível para acesso a dados, aprimorando a manutenibilidade e testabilidade.
 - **Padrão Repository**: Este padrão separa a lógica de acesso a dados da lógica de negócios em uma aplicação, fornecendo uma interface consistente para operações de dados. Isso permite uma manutenção e testabilidade mais fácil do código, promovendo a reutilização de código ao encapsular detalhes de acesso a dados dentro de repositórios.
-- **DB-First**: Para este projeto, foi utilizado o método DB-First, onde a tabela foi mapeada no método `OnModelCreating` na classe `CommerceDbContext`. Também no projeto encontra-se o script para criação da tabela.
+- **Code-First**: Para este projeto, foi utilizado o método Code-First. Configurações pertinentes são realizadas no método `OnModelCreating` na classe `CommerceDbContext`.
   
 ## Funcionalidades
 
