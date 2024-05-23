@@ -1,4 +1,5 @@
-﻿using Commerce.Infrastructure.Interfaces;
+﻿using Commerce.Domain;
+using Commerce.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,14 @@ public class Repository<T> : IRepository<T> where T : class
         DbSet = context.Set<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public async Task<ListaPaginada<T>> GetAllAsync()
     {
-        return await DbSet.ToListAsync();
+        var items = await DbSet.ToListAsync();
+
+        return new ListaPaginada<T>(items, items.Count, 1, items.Count);
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public async Task<T?> GetByIdAsync(long id)
     {
         return await DbSet.FindAsync(id);
     }
@@ -41,7 +44,7 @@ public class Repository<T> : IRepository<T> where T : class
         await Context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(long id)
     {
         T? entityToDelete = await DbSet.FindAsync(id);
         if (entityToDelete != null)

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Commerce.Application;
+namespace Commerce.Application.IServices;
 
 public interface IProdutoService
 {
-    Task<List<Produto>> GetAllProdutosAsync(string nomeCampo, bool isAcendente = true, int pageNumber = 1, int pageSize = 10);
+    Task<ListaPaginada<ProdutoDTO>> GetAllProdutosAsync(string nomeCampo, ConfiguracaoPaginacao configuracao, bool isAcendente = true);
 
     Task<Produto?> GetProdutoByIdAsync(long id);
 

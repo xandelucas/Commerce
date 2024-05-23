@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Commerce.Application;
 using Commerce.Application.Services;
-using Commerce.Infrastructure;
 using Commerce.Infrastructure.Data;
 using Commerce.Infrastructure.Interfaces;
 using Commerce.API;
@@ -10,6 +9,8 @@ using Commerce.Domain;
 using Microsoft.AspNetCore.Diagnostics;
 using BancoApp.API;
 using FluentValidation;
+using Commerce.Application.IServices;
+using Commerce.Infrastructure.Repositorys;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddDbContext<CommerceDBContext>(options =>
 builder.Services.AddHostedService<SeedHostedService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(CommerceMapping));
 

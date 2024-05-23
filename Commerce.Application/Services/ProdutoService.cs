@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using Commerce.Application.DTOs;
+using Commerce.Application.IServices;
 using Commerce.Domain;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Commerce.Application.Services;
 
@@ -39,9 +36,11 @@ public class ProdutoService : IProdutoService
         await _produtoRepository.DeletaProdutoAsync(produto);
     }
 
-    public async Task<List<Produto>> GetAllProdutosAsync(string nomeCampo, bool isAcendente = true, int pageNumber = 1, int pageSize = 10)
+    public async Task<ListaPaginada<ProdutoDTO>> GetAllProdutosAsync(string nomeCampo,
+            ConfiguracaoPaginacao configuracao,
+            bool isAcendente = true)
     {
-        return await _produtoRepository.GetAllProdutosAsync(nomeCampo, isAcendente, pageNumber, pageSize);
+        return await _produtoRepository.GetAllProdutosAsync(nomeCampo, configuracao, isAcendente);
     }
 
     public async Task<Produto?> GetProdutoByIdAsync(long id)

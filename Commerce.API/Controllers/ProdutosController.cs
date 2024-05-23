@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Commerce.Domain;
-using Commerce.Application;
 using Commerce.Application.DTOs;
 using AutoMapper;
+using Commerce.Application.IServices;
 
 namespace Commerce.API.Controllers;
 
@@ -30,12 +30,16 @@ public class ProdutosController : ControllerBase
     /// <summary>
     /// Lista todos os produtos cadastrados no sistema.
     /// </summary>
-    /// <param name="page">Número da página</param>
-    /// <param name="pageSize">Tamanho da página</param>
+    /// <param name="isAscendente">Número da página</param>
+    /// <param name="nomeCampo">Tamanho da página</param>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Produto>>> GetProduto(int page = 1, int pageSize = 10)
+    public async Task<ActionResult<ListaPaginada<ProdutoDTO>>> GetProduto(bool isAscendente,
+            string nomeCampo = "id")
     {
-        var produtos = await _produtoService.GetAllProdutosAsync(nomeCampo: "Id", true, page, pageSize);
+        var configuracao = new ConfiguracaoPaginacao();
+        var produtos = await _produtoService.GetAllProdutosAsync(nomeCampo,
+                configuracao,
+                isAscendente);
         return Ok(produtos);
     }
 
@@ -44,16 +48,30 @@ public class ProdutosController : ControllerBase
     /// Lista todos os produtos cadastrados no sistema com campos para Ordenação.
     /// </summary>
     /// <param name="nomeCampo">Nome do campo para ordenação</param>
+    /// <param name="configuracao"></param>
     /// <param name="isAscendente">Ordenação ascendente ou descendente</param>
-    /// <param name="pageNumber">Número da página</param>
-    /// <param name="pageSize">Tamanho da página</param>
     [HttpGet("ProdutoOrdenado")]
-    public async Task<ActionResult<IEnumerable<Produto>>> GetProdutoOrdenado(string nomeCampo, bool isAscendente, int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<ListaPaginada<ProdutoDTO>>> GetProdutoOrdenado(bool isAscendente, [FromQuery] ConfiguracaoPaginacao configuracao, string nomeCampo = "id")
     {
-        var produtos = await _produtoService.GetAllProdutosAsync(nomeCampo, isAscendente, pageNumber, pageSize);
+        var produtos = await _produtoService.GetAllProdutosAsync(nomeCampo,
+                configuracao,
+                isAscendente);
+
         return Ok(produtos);
     }
 
+    // GET: api/Produtos
+    /// <summary>
+    /// Busca todos os produtos com o Nome informado.
+    /// </summary>
+    /// <param name="nome">Nome do produto</param>
+    [HttpGet("ProdutoPorNome")]
+    public async Task<ActionResult<ListaPaginada<ProdutoDTO>>> GetProdutoNome(string nome)
+    {
+        var produtos = await _produtoService.GetProdutoByNomeAsync(nome);
+
+        return Ok(produtos);
+    }
     // GET: api/Produtos/5
     /// <summary>
     /// Busca produto por Id
