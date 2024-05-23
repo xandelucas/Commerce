@@ -9,56 +9,55 @@ using System.Threading.Tasks;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Commerce.Infrastructure.Data
+namespace Commerce.Infrastructure.Data;
+
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly CommerceDBContext _dbContext;
+    private bool _disposed;
+    private IDbContextTransaction? _trasaction;
+
+    public UnitOfWork(CommerceDBContext dbContext)
     {
-        private readonly CommerceDBContext _dbContext;
-        private bool _disposed;
-        private IDbContextTransaction? _trasaction;
+        _dbContext = dbContext;
+    }
 
-        public UnitOfWork(CommerceDBContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+    public void BeginTransaction()
+    {
+        _trasaction = _dbContext.Database.BeginTransaction();
+    }
 
-        public void BeginTransaction()
-        {
-            _trasaction = _dbContext.Database.BeginTransaction();
-        }
+    public void Commit()
+    {
+        _dbContext.SaveChanges();
+        _trasaction?.Commit();
+    }
 
-        public void Commit()
-        {
-            _dbContext.SaveChanges();
-            _trasaction?.Commit();
-        }
+    public void Rollback()
+    {
+        _trasaction?.Rollback();
+    }
 
-        public void Rollback()
-        {
-            _trasaction?.Rollback();
-        }
+    public IRepository<T> Repository<T>() where T : class
+    {
+        return new Repository<T>(_dbContext);
+    }
 
-        public IRepository<T> Repository<T>() where T : class
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
         {
-            return new Repository<T>(_dbContext);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    _dbContext.Dispose();
-                }
+                _dbContext.Dispose();
             }
-            _disposed = true;
         }
+        _disposed = true;
+    }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
