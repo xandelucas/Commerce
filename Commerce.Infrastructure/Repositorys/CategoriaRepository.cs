@@ -12,8 +12,8 @@ public class CategoriaRepository : ICategoriaRepository
 {
     private readonly CommerceDBContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly Repository<Categoria> _categoriaRepository;
-    public CategoriaRepository(CommerceDBContext dbContext, IMapper mapper, Repository<Categoria> categoriaRepository)
+    private readonly IRepository<Categoria> _categoriaRepository;
+    public CategoriaRepository(CommerceDBContext dbContext, IMapper mapper, IRepository<Categoria> categoriaRepository)
     {
         _dbContext = dbContext;
         _mapper = mapper;

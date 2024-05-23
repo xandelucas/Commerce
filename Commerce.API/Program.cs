@@ -27,8 +27,8 @@ builder.Services.AddDbContext<CommerceDBContext>(options =>
 
 
 builder.Services.AddHostedService<SeedHostedService>();
-builder.Services.AddScoped<IRepository<Categoria>,Repository<Categoria>>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IRepository<Categoria>, Repository<Categoria>>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
