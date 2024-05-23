@@ -6,7 +6,7 @@ using AutoMapper;
 using Commerce.Application.IServices;
 
 namespace Commerce.API.Controllers;
-/*
+
 [Route("api/[controller]")]
 [ApiController]
 public class CategoriasController : ControllerBase
@@ -134,4 +134,4 @@ public class CategoriasController : ControllerBase
     {
         return await _categoriaService.GetCategoriaByIdAsync(id) is not null;
     }
-} */
+}
