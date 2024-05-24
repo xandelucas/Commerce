@@ -11,10 +11,10 @@ namespace Commerce.Infrastructure.Data;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    protected readonly DbContext Context;
+    protected readonly CommerceDBContext Context;
     protected DbSet<T> DbSet;
 
-    public Repository(DbContext context)
+    public Repository(CommerceDBContext context)
     {
         Context = context;
         DbSet = context.Set<T>();
