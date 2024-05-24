@@ -16,9 +16,9 @@ internal class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.Property(e => e.Nome).HasMaxLength(64);
         builder.Property(e => e.Valor).HasPrecision(14, 3);
         builder.Property(e => e.Estoque);
-        builder.Property(e => e.DataCadastroUtc);
+        builder.Property(e => e.DataCadastroUtc).ValueGeneratedOnAdd();
         builder.Property(e => e.Status);
-        builder.Property(e => e.DataAtualizacaoUtc);
+        builder.Property(e => e.DataAtualizacaoUtc).ValueGeneratedOnAddOrUpdate();
         builder.Property(e => e.CategoriaId);
 
         builder

@@ -54,8 +54,8 @@ namespace Commerce.Application.Services
     {
         public CategoriaDTOValidator()
         {
-            RuleFor(x => x.Nome).NotEmpty().MinimumLength(2).MaximumLength(3).WithMessage("O nome da categoria não pode ser vazia.");
-            RuleFor(x => x.Descricao).NotEmpty().MinimumLength(3).MaximumLength(999).WithMessage("A descrição da categoria não pode ser vazia.");
+            RuleFor(x => x.Nome).NotEmpty().MinimumLength(2).MaximumLength(64);
+            RuleFor(x => x.Descricao).NotEmpty().MinimumLength(3).MaximumLength(999);
         }
     }
 }
